@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body { @apply bg-canvas font-sans text-ink antialiased; }
+  :focus-visible { @apply outline-none ring-2 ring-brand-700 ring-offset-2 ring-offset-white; }
+  input, select, textarea, button { font: inherit; }
+}
+
+@layer components {
+  .card { @apply rounded-2xl border border-line bg-white; }
+  .card-title { @apply text-[15px] font-semibold tracking-[-0.01em]; }
+  .btn { @apply inline-flex h-10 items-center justify-center gap-2 rounded-[10px] px-3.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60; }
+  .btn-primary { @apply btn bg-ink text-white hover:bg-ink-2; }
+  .btn-brand { @apply btn bg-brand-700 text-white hover:bg-brand-800; }
+  .btn-outline { @apply btn border border-line bg-white text-ink hover:bg-canvas; }
+  .input { @apply h-10 w-full rounded-[10px] border border-line bg-white px-3 text-sm text-ink placeholder:text-faint focus:border-brand-700 focus:outline-none focus:ring-4 focus:ring-brand-150; }
+  .num { font-variant-numeric: tabular-nums; }
+  .chip { @apply inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[13px]; }
+  .dots-bg { background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px); background-size: 16px 16px; }
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}

@@ -1,0 +1,12 @@
+fastapi>=0.115
+uvicorn[standard]>=0.30
+sqlalchemy>=2.0.36
+psycopg[binary]>=3.2
+pydantic-settings>=2.7
+apscheduler>=3.11,<4
+pyjwt>=2.10
+numpy>=1.26
+# The embedding model: install torch (CUDA build) + sentence-transformers the same way as the Module 3 pipeline.
+# If you run the API inside the pipeline venv (recommended) these are already there.
+sentence-transformers>=3.0
+pytest>=8

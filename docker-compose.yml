@@ -1,0 +1,45 @@
+# AI Readiness — run the website + API + database in Docker (no Python / Node / PostgreSQL to install)
+#
+#   1) download jobmarket.sql.gz from the GitHub Release and put it in ./database/
+#   2) copy .env.example to .env (set DB_PASSWORD, ADMIN_PASSWORD, JWT_SECRET)
+#   3) docker compose up -d --build        ->  http://localhost:8080
+#
+# The first start restores the dump (a few minutes) and downloads the bge-m3 model (~2 GB, CPU).
+# Crawling (Modules 1-3: Playwright scrapers + Gemini) runs on Windows, not in these containers — see README.
+services:
+  db:
+    image: pgvector/pgvector:pg18
+    environment:
+      POSTGRES_DB: jobmarket
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d:ro   # *.sql.gz here is restored on the first start only
+      - pgdata:/var/lib/postgresql
+    ports: ["5433:5432"]                             # 5433 so it does not clash with a local PostgreSQL
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d jobmarket"]
+      interval: 10s
+      retries: 60
+
+  api:
+    build: ./backend
+    depends_on:
+      db: { condition: service_healthy }
+    environment:
+      DATABASE_URL: postgresql+psycopg://postgres:${DB_PASSWORD}@db:5432/jobmarket
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD in .env}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      CORS_ORIGINS: http://localhost:8080
+    volumes: [models:/models]
+    ports: ["8000:8000"]
+
+  web:
+    build: ./frontend
+    depends_on: [api]
+    ports: ["8080:80"]
+
+volumes:
+  pgdata:
+  models:
