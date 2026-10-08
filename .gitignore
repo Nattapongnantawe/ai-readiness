@@ -1,6 +1,26 @@
+# secrets — never commit
 .env
-__pycache__/
-*.pyc
+.env.*
+!.env.example
+
+# environments / builds
+venv/
 .venv/
 node_modules/
 dist/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# data and runtime files (scraped jobs hold contact info — PDPA)
+logs/
+output/
+backup/
+_release/
+*.jsonl
+*.dump
+*.sql.gz
+listing_dates.json
+CurrStructRPT*.pdf
+tools/cloudflared.exe
+tools/tunnel.log

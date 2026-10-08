@@ -18,12 +18,16 @@ services:
       - pgdata:/var/lib/postgresql
     ports: ["5433:5432"]                             # 5433 so it does not clash with a local PostgreSQL
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d jobmarket"]
+      # -h 127.0.0.1: during the first start the dump is restored by a temporary server that listens on the
+      # Unix socket only, so a TCP check stays "unhealthy" until the restore is finished and the real server is up.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U postgres -d jobmarket"]
       interval: 10s
+      start_period: 30m
       retries: 60
 
   api:
     build: ./backend
+    restart: on-failure
     depends_on:
       db: { condition: service_healthy }
     environment:
